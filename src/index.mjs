@@ -2,7 +2,7 @@ import express from 'express'
 import userRouter from './routes/users.mjs'
 import productRouter from './routes/products.mjs'
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
+import session from 'express-session'; // represents the duration of a user in a website since http are stateless.
 import mongoose from 'mongoose';
 import MongoStore from 'connect-mongo';
 // import routes from './routes/index.mjs
@@ -21,7 +21,7 @@ app.use(cookieParser('helloworld'))// the string passed here is the secrete key
 app.use(session({
     secret: "nnaemeka",
     saveUninitialized: false, // only saves when we modify the session state ourself if true stores a session for each request which can take up memory
-    resave:false,
+    resave:false, // resaves the cookie if true.
     cookie: {
         maxAge: 60000 * 60
     },
@@ -54,6 +54,8 @@ app.get('/', loggingMiddleware, (request, response) => {
     console.log(request.session.id);
     // we use passport so we do not have to modify the session state ourself.
     // also before we modify the session the session id changes for each request.
+    // by creating the dynamic property in this case visited the session id stays same.
+    // which is good because now we can track who logs in and who doesn't.
     request.session.visited = true; // now cookie is stored check save uninitialized in session cookie
     response.cookie("hello", "world", {maxAge: 300000, signed: true});
     response.send({message: 'Hello World!'});
